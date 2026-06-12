@@ -14,6 +14,8 @@ type Props = {
   escapeCount: number;
 };
 
+const GRACE_MS = 900;
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
@@ -29,6 +31,14 @@ function getFleeSettings(fleeIndex: number) {
   };
 }
 
+function waitForLayout() {
+  return new Promise<void>((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => resolve());
+    });
+  });
+}
+
 export function EscapingNoButton({
   onEscape,
   onCaught,
@@ -38,7 +48,7 @@ export function EscapingNoButton({
   escapeCount,
 }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
+  const mouseRef = useRef({ x: -9999, y: -9999 });
   const fleeingRef = useRef(false);
   const tauntCooldown = useRef(false);
   const modalOpenRef = useRef(false);
@@ -48,12 +58,17 @@ export function EscapingNoButton({
   const positionRef = useRef({ x: 0, y: 0 });
   const fleeCountRef = useRef(0);
   const anchorRef = useRef<{ x: number; y: number } | null>(null);
+  const isLooseRef = useRef(false);
+  const fleeEnabledRef = useRef(false);
 
   const { stalking, noFines } = inviteConfig;
 
   const [isLoose, setIsLoose] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(
+    null
+  );
   const [isShaking, setIsShaking] = useState(false);
+  const [fleeEnabled, setFleeEnabled] = useState(false);
   const [taunt, setTaunt] = useState<{ msg: string; x: number; y: number } | null>(
     null
   );
@@ -62,6 +77,23 @@ export function EscapingNoButton({
     isAuto: boolean;
   } | null>(null);
   const [fineAttempt, setFineAttempt] = useState(0);
+
+  useEffect(() => {
+    isLooseRef.current = isLoose;
+  }, [isLoose]);
+
+  useEffect(() => {
+    fleeEnabledRef.current = false;
+    setFleeEnabled(false);
+
+    const timer = setTimeout(async () => {
+      await waitForLayout();
+      fleeEnabledRef.current = true;
+      setFleeEnabled(true);
+    }, GRACE_MS);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const syncDebt = useCallback(
     (debt: number) => {
@@ -125,13 +157,17 @@ export function EscapingNoButton({
   );
 
   const fleeFrom = useCallback(
-    (fromX: number, fromY: number, triggerEscape = true) => {
-      if (fleeingRef.current) return;
+    async (fromX: number, fromY: number, triggerEscape = true) => {
+      if (!fleeEnabledRef.current || fleeingRef.current) return;
 
       const wrapper = wrapperRef.current;
       if (!wrapper) return;
 
+      await waitForLayout();
+
       const rect = wrapper.getBoundingClientRect();
+      if (rect.width < 20 || rect.height < 20) return;
+
       const btnW = rect.width;
       const btnH = rect.height;
       const padding = 12;
@@ -139,15 +175,16 @@ export function EscapingNoButton({
       const fleeIndex = fleeCountRef.current;
       const settings = getFleeSettings(fleeIndex);
 
-      const currentX = isLoose ? positionRef.current.x : rect.left;
-      const currentY = isLoose ? positionRef.current.y : rect.top;
+      const currentX = isLooseRef.current ? positionRef.current.x : rect.left;
+      const currentY = isLooseRef.current ? positionRef.current.y : rect.top;
       const centerX = currentX + btnW / 2;
       const centerY = currentY + btnH / 2;
 
-      if (!isLoose) {
-        setIsLoose(true);
-        positionRef.current = { x: currentX, y: currentY };
+      if (!isLooseRef.current) {
         anchorRef.current = { x: centerX, y: centerY };
+        positionRef.current = { x: currentX, y: currentY };
+        isLooseRef.current = true;
+        setIsLoose(true);
       }
 
       let dx = centerX - fromX;
@@ -220,7 +257,6 @@ export function EscapingNoButton({
       }
     },
     [
-      isLoose,
       onEscape,
       showFineModal,
       showTaunt,
@@ -235,6 +271,8 @@ export function EscapingNoButton({
   }, [showFineModal]);
 
   useEffect(() => {
+    if (!fleeEnabled) return;
+
     const trackMouse = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
 
@@ -242,6 +280,8 @@ export function EscapingNoButton({
       if (!wrapper || fleeingRef.current || modalOpenRef.current) return;
 
       const rect = wrapper.getBoundingClientRect();
+      if (rect.width < 20) return;
+
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       const distance = Math.hypot(e.clientX - cx, e.clientY - cy);
@@ -255,10 +295,10 @@ export function EscapingNoButton({
 
     window.addEventListener("mousemove", trackMouse);
     return () => window.removeEventListener("mousemove", trackMouse);
-  }, [fleeFrom]);
+  }, [fleeEnabled, fleeFrom]);
 
   const handlePointerNear = () => {
-    if (!modalOpenRef.current) {
+    if (fleeEnabledRef.current && !modalOpenRef.current) {
       fleeFrom(mouseRef.current.x, mouseRef.current.y);
     }
   };
@@ -273,42 +313,61 @@ export function EscapingNoButton({
   const rotate =
     (escapeCount % 2 === 0 ? 1 : -1) * Math.min(escapeCount * 2, 10);
 
-  const wrapperStyle = isLoose
-    ? {
-        position: "fixed" as const,
-        left: position.x,
-        top: position.y,
-        zIndex: 50,
-        transition: "left 0.22s ease-out, top 0.22s ease-out",
-      }
-    : undefined;
+  const wrapperStyle =
+    isLoose && position
+      ? {
+          position: "fixed" as const,
+          left: position.x,
+          top: position.y,
+          zIndex: 50,
+          transition: "left 0.22s ease-out, top 0.22s ease-out",
+        }
+      : undefined;
 
   return (
     <>
-      <div ref={wrapperRef} style={wrapperStyle}>
-        <button
-          type="button"
-          className={`no-btn shrink-0 rounded-full border-2 border-rose-200 bg-white/90 px-6 py-3 text-sm font-medium text-rose-500 shadow-md backdrop-blur-sm transition-[transform,box-shadow] duration-150 sm:px-8 sm:py-3.5 sm:text-base ${
-            isShaking ? "no-btn-shake" : ""
-          } ${isLoose ? "no-btn-loose" : ""}`}
-          style={{
-            transform: `scale(${shrink}) rotate(${rotate}deg)`,
-          }}
-          onMouseEnter={handlePointerNear}
-          onTouchStart={(e) => {
-            e.preventDefault();
-            if (!modalOpenRef.current) {
-              const touch = e.touches[0];
-              fleeFrom(touch.clientX, touch.clientY);
-            }
-          }}
-          onClick={(e) => {
-            e.preventDefault();
-            handleCaught();
-          }}
+      {/* Espaço reservado — evita o Sim pular quando o Não solta */}
+      <div className="relative inline-flex min-h-[48px] min-w-[100px] items-center justify-center">
+        {isLoose && (
+          <span
+            className="invisible rounded-full px-8 py-3.5 text-sm sm:px-10 sm:text-base"
+            aria-hidden
+          >
+            {message}
+          </span>
+        )}
+
+        <div
+          ref={wrapperRef}
+          className={isLoose ? "" : "relative"}
+          style={wrapperStyle}
         >
-          {message}
-        </button>
+          <button
+            type="button"
+            className={`no-btn shrink-0 rounded-full border-2 border-rose-200 bg-white/90 px-6 py-3 text-sm font-medium text-rose-500 shadow-md backdrop-blur-sm transition-[transform,box-shadow] duration-150 sm:px-8 sm:py-3.5 sm:text-base ${
+              isShaking ? "no-btn-shake" : ""
+            } ${isLoose ? "no-btn-loose" : ""} ${
+              !fleeEnabled ? "opacity-100" : ""
+            }`}
+            style={{
+              transform: `scale(${shrink}) rotate(${rotate}deg)`,
+            }}
+            onMouseEnter={handlePointerNear}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              if (fleeEnabledRef.current && !modalOpenRef.current) {
+                const touch = e.touches[0];
+                fleeFrom(touch.clientX, touch.clientY);
+              }
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              handleCaught();
+            }}
+          >
+            {message}
+          </button>
+        </div>
       </div>
 
       {taunt && <FloatingTaunt message={taunt.msg} x={taunt.x} y={taunt.y} />}

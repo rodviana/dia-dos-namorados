@@ -16,6 +16,13 @@ export const inviteConfig = {
   confirmationMessage:
     "Perfeito! Já estou ansioso(a). Te mando os detalhes finais em breve.",
 
+  /** Música de fundo (YouTube) */
+  music: {
+    title: "Dilemma",
+    artists: "Nelly, Kelly Rowland",
+    youtubeId: "WwJm5hnWv6E",
+  },
+
   /** WhatsApp para receber o resumo da confirmação */
   contact: {
     whatsapp: "5562999768895",

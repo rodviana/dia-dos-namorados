@@ -406,10 +406,185 @@ body {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.02);
+    transform: scale(1.03);
   }
 }
 
 .roulette-spin {
-  animation: roulette-spin 0.1s ease infinite;
+  animation: roulette-spin 0.12s ease infinite;
+}
+
+@keyframes roulette-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 8px 32px rgba(244, 63, 94, 0.2),
+      0 0 0 0 rgba(251, 191, 36, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 12px 40px rgba(244, 63, 94, 0.35),
+      0 0 20px 4px rgba(251, 191, 36, 0.25);
+  }
+}
+
+.roulette-glow {
+  animation: roulette-glow 2s ease-in-out infinite;
+}
+
+@keyframes roulette-btn-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.roulette-btn:not(:disabled) {
+  animation: roulette-btn-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes roulette-tick {
+  from {
+    opacity: 0.4;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.roulette-tick {
+  animation: roulette-tick 0.09s ease forwards;
+}
+
+@keyframes roulette-result-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.roulette-result-pop {
+  animation: roulette-result-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Music player */
+@keyframes music-hint-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.music-hint-enter {
+  animation: music-hint-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes music-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.music-panel-enter {
+  animation: music-panel-enter 0.35s ease forwards;
+}
+
+@keyframes music-btn-pulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.35);
+  }
+  50% {
+    box-shadow: 0 4px 28px rgba(244, 63, 94, 0.55);
+  }
+}
+
+.music-btn:not(.bg-rose-500) {
+  animation: music-btn-pulse 2s ease-in-out infinite;
+}
+
+/* Music welcome gate */
+.music-gate {
+  background: linear-gradient(
+    135deg,
+    #fff1f2 0%,
+    #ffe4e6 40%,
+    #fecdd3 70%,
+    #fda4af 100%
+  );
+}
+
+.music-gate-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 20px 60px rgba(190, 18, 60, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  animation: music-gate-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes music-gate-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes music-gate-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.music-gate-pulse {
+  animation: music-gate-pulse 2s ease-in-out infinite;
+}
+
+@keyframes music-gate-btn-glow {
+  0%,
+  100% {
+    box-shadow: 0 8px 32px rgba(244, 63, 94, 0.35);
+  }
+  50% {
+    box-shadow: 0 12px 40px rgba(244, 63, 94, 0.55);
+  }
+}
+
+.music-gate-btn {
+  animation: music-gate-btn-glow 1.8s ease-in-out infinite;
+}
+
+.music-gate-song {
+  animation: fun-hint-pulse 2s ease-in-out infinite;
 }

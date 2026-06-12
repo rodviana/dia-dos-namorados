@@ -133,6 +133,20 @@ export function DatePlanningForm({ onConfirm }: Props) {
           {step === 1 && (
             <fieldset>
               <legend className="sr-only">Escolha o local</legend>
+
+              <PlaceRoulette
+                selectedPlaceId={placeId}
+                onSelect={(id) => {
+                  setPlaceId(id);
+                  setCustomPlace("");
+                  setError("");
+                }}
+              />
+
+              <p className="mb-4 text-center text-xs font-semibold uppercase tracking-widest text-rose-300">
+                — ou escolhe manualmente —
+              </p>
+
               <div className="grid gap-3 sm:grid-cols-2">
                 {placeOptions.map((place) => (
                   <OptionCard
@@ -168,14 +182,6 @@ export function DatePlanningForm({ onConfirm }: Props) {
                   className="mt-4 w-full rounded-xl border border-rose-200 bg-white/80 px-4 py-3 text-sm text-rose-800 placeholder:text-rose-300 focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-200"
                 />
               )}
-
-              <PlaceRoulette
-                onSelect={(id) => {
-                  setPlaceId(id);
-                  setCustomPlace("");
-                  setError("");
-                }}
-              />
             </fieldset>
           )}
 

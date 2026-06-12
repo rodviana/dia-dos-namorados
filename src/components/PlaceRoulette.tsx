@@ -7,9 +7,10 @@ type Place = (typeof inviteConfig.placeOptions)[number];
 
 type Props = {
   onSelect: (placeId: string) => void;
+  selectedPlaceId?: string;
 };
 
-export function PlaceRoulette({ onSelect }: Props) {
+export function PlaceRoulette({ onSelect, selectedPlaceId }: Props) {
   const places = inviteConfig.placeOptions.filter((p) => !p.allowCustom);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<Place | null>(null);
@@ -21,7 +22,7 @@ export function PlaceRoulette({ onSelect }: Props) {
     setResult(null);
 
     let ticks = 0;
-    const maxTicks = 18 + Math.floor(Math.random() * 8);
+    const maxTicks = 20 + Math.floor(Math.random() * 10);
     const winner = places[Math.floor(Math.random() * places.length)];
 
     const interval = setInterval(() => {
@@ -35,39 +36,77 @@ export function PlaceRoulette({ onSelect }: Props) {
         setSpinning(false);
         onSelect(winner.id);
       }
-    }, 100);
+    }, 90);
   };
 
+  const isWinner =
+    result && selectedPlaceId === result.id && !spinning;
+
   return (
-    <div className="mt-6 rounded-2xl border border-dashed border-rose-200 bg-rose-50/50 p-4 text-center">
-      <p className="mb-3 text-xs font-medium text-rose-500">
-        Indeciso(a)? Deixa o destino decidir 🎰
+    <div className="roulette-card roulette-glow mb-8 rounded-2xl border-2 border-rose-300 bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 p-5 text-center shadow-lg shadow-rose-200/50 sm:p-6">
+      <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.25em] text-rose-400">
+        ✦ Não sabe? ✦
+      </p>
+      <h3 className="font-serif text-xl font-bold text-rose-800 sm:text-2xl">
+        Gira a roleta do encontro!
+      </h3>
+      <p className="mt-1 text-sm text-rose-500">
+        Deixa o destino escolher o local 🎰
       </p>
 
       <div
-        className={`mb-3 min-h-[72px] rounded-xl bg-white/80 p-4 transition ${
-          spinning ? "roulette-spin" : ""
+        className={`roulette-wheel relative mx-auto mt-5 max-w-xs overflow-hidden rounded-2xl border-2 bg-white p-6 shadow-inner ${
+          spinning
+            ? "border-amber-400 roulette-spin"
+            : isWinner
+              ? "border-emerald-400"
+              : "border-rose-200"
         }`}
       >
-        {display ? (
-          <>
-            <span className="text-3xl">{display.icon}</span>
-            <p className="mt-1 text-sm font-semibold text-rose-800">
-              {display.name}
-            </p>
-          </>
-        ) : (
-          <p className="py-3 text-sm text-rose-300">Gira pra descobrir!</p>
+        {spinning && (
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-amber-100/40 to-transparent" />
         )}
+
+        <div className="relative min-h-[88px]">
+          {display ? (
+            <div
+              key={display.id + (spinning ? "-spin" : "-done")}
+              className={spinning ? "roulette-tick" : "roulette-result-pop"}
+            >
+              <span className="block text-5xl sm:text-6xl">{display.icon}</span>
+              <p className="mt-2 text-lg font-bold text-rose-800">
+                {display.name}
+              </p>
+              {!spinning && result && (
+                <p className="mt-1 text-xs text-rose-500">
+                  {display.description}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="flex min-h-[88px] flex-col items-center justify-center">
+              <span className="text-5xl opacity-40">🎰</span>
+              <p className="mt-2 text-sm font-medium text-rose-400">
+                Aperta o botão e descobre!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
+
+      {isWinner && (
+        <p className="roulette-result-pop mt-3 text-sm font-semibold text-emerald-600">
+          O destino escolheu! ✨
+        </p>
+      )}
 
       <button
         type="button"
         onClick={spin}
         disabled={spinning}
-        className="rounded-full bg-rose-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-rose-600 disabled:opacity-60"
+        className="roulette-btn mt-5 w-full max-w-xs rounded-full bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 py-4 text-base font-bold text-white shadow-lg shadow-rose-400/40 transition hover:from-amber-600 hover:via-rose-600 hover:to-pink-600 disabled:opacity-70 sm:text-lg"
       >
-        {spinning ? "Girando..." : result ? "Girar de novo" : "Girar a roleta!"}
+        {spinning ? "🎲 Girando..." : result ? "🎲 Girar de novo!" : "🎲 GIRAR A ROLETA!"}
       </button>
     </div>
   );
