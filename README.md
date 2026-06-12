@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💌 Convite Formal
 
-## Getting Started
+Convite interativo em Next.js para chamar alguém para sair — com botão "Não" que foge, multa PIX e formulário para escolher data, horário e local.
 
-First, run the development server:
+## ✨ Funcionalidades
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Convite formal** — tom elegante, personalizável
+- **Botão "Não" que foge** — com multas PIX progressivas se clicar
+- **Botão "Sim" que cresce** — quanto mais persegue o Não, maior fica o Sim
+- **Formulário de encontro** — escolha de data, horário e local
+- **Confirmação** — resumo do plano + copiar / WhatsApp
+- **100% personalizável** — edite `src/config/inviteConfig.ts`
+
+## 🚀 Como usar
+
+### 1. Personalize
+
+Edite `src/config/inviteConfig.ts`:
+
+```ts
+export const inviteConfig = {
+  yourName: "Seu Nome",
+  guestName: "Nome Dela/Ele",
+  invitation: "Seu texto de convite...",
+  dateOptions: [
+    { id: "sab-14", label: "Sábado, 14 de junho" },
+    // ...
+  ],
+  timeOptions: ["18:00", "19:00", "20:00"],
+  placeOptions: [
+    { id: "jantar", name: "Jantar", description: "...", icon: "🍽️" },
+    // ...
+  ],
+  contact: {
+    whatsapp: "5511999999999", // opcional
+    label: "Me chama no WhatsApp",
+  },
+};
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Rode localmente
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Deploy
 
-## Learn More
+Push para o GitHub e importe no [Vercel](https://vercel.com).
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠 Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16 · TypeScript · Tailwind CSS

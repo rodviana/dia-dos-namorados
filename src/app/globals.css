@@ -1,26 +1,415 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --rose-glow: #fda4af;
+  --rose-deep: #be123c;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+/* Romantic gradient background */
+.romantic-bg {
+  background: linear-gradient(
+    135deg,
+    #fff1f2 0%,
+    #ffe4e6 25%,
+    #fecdd3 50%,
+    #fda4af 75%,
+    #fb7185 100%
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 12s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 8px 32px rgba(190, 18, 60, 0.12),
+    0 2px 8px rgba(190, 18, 60, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Floating hearts */
+@keyframes float-up {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(360deg) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.heart-float {
+  animation: float-up linear infinite;
+}
+
+/* Card entrance */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.card-enter {
+  animation: card-enter 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Success screen */
+@keyframes success-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.success-enter {
+  animation: success-enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.success-card {
+  animation: card-enter 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* Hint fade in */
+@keyframes hint-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hint-fade {
+  animation: hint-fade 0.4s ease forwards;
+}
+
+/* Fun hint banner */
+@keyframes fun-hint-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(12px);
+  }
+  60% {
+    transform: scale(1.03) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fun-hint-pulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.25);
+  }
+  50% {
+    box-shadow: 0 6px 28px rgba(244, 63, 94, 0.45);
+  }
+}
+
+@keyframes fun-hint-emoji {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.2) rotate(-8deg);
+  }
+  75% {
+    transform: scale(1.2) rotate(8deg);
+  }
+}
+
+.fun-hint-enter {
+  animation: fun-hint-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.fun-hint-pulse {
+  animation: fun-hint-pulse 1.5s ease-in-out infinite;
+}
+
+.fun-hint-emoji {
+  animation: fun-hint-emoji 0.8s ease-in-out infinite;
+}
+
+.debt-badge {
+  animation: fun-hint-pulse 1.2s ease-in-out infinite;
+}
+
+/* Confetti */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti-piece {
+  animation: confetti-fall linear forwards;
+  border-radius: 2px;
+}
+
+/* Yes button pulse */
+@keyframes yes-pulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(244, 63, 94, 0.6);
+  }
+}
+
+.yes-btn {
+  animation: yes-pulse 2s ease-in-out infinite;
+}
+
+/* No button fleeing */
+.no-btn-loose {
+  cursor: not-allowed;
+  box-shadow: 0 8px 24px rgba(190, 18, 60, 0.2);
+}
+
+@keyframes no-shake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  20% {
+    transform: translateX(-8px) rotate(-4deg);
+  }
+  40% {
+    transform: translateX(8px) rotate(4deg);
+  }
+  60% {
+    transform: translateX(-6px) rotate(-3deg);
+  }
+  80% {
+    transform: translateX(6px) rotate(3deg);
+  }
+}
+
+.no-btn-shake {
+  animation: no-shake 0.45s ease-in-out;
+}
+
+/* Fine modal */
+@keyframes fine-modal-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.fine-modal-enter {
+  animation: fine-modal-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Form steps */
+@keyframes step-forward {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes step-back {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-forward {
+  animation: step-forward 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.step-back {
+  animation: step-back 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Fun effects */
+.typewriter-cursor {
+  animation: blink 0.8s step-end infinite;
+  color: #f43f5e;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes screen-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.screen-shake {
+  animation: screen-shake 0.45s ease-in-out;
+}
+
+@keyframes taunt-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(8px);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-8px);
+  }
+}
+
+.taunt-pop {
+  animation: taunt-pop 1.4s ease forwards;
+}
+
+@keyframes fun-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fun-toast-enter {
+  animation: fun-toast-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes loader-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.loader-bounce {
+  animation: loader-bounce 0.8s ease-in-out infinite;
+}
+
+@keyframes heart-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.9);
+  }
+}
+
+.heart-pop {
+  animation: heart-pop 1.2s ease forwards;
+}
+
+.heart-clickable {
+  pointer-events: auto;
+}
+
+@keyframes roulette-spin {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.roulette-spin {
+  animation: roulette-spin 0.1s ease infinite;
 }
