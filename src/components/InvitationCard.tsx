@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { inviteConfig, type DatePlan } from "@/config/inviteConfig";
+import type { DatePlan } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 import { AcceptanceLoader } from "./AcceptanceLoader";
 import { ConfirmationScreen } from "./ConfirmationScreen";
 import { DatePlanningForm } from "./DatePlanningForm";
@@ -19,8 +20,15 @@ type Props = {
 };
 
 export function InvitationCard({ heartClicks = 0 }: Props) {
-  const { guestName, yourName, title, invitation, noButtonMessages, fun } =
-    inviteConfig;
+  const {
+    guestName,
+    yourName,
+    title,
+    invitation,
+    noButtonMessages,
+    fun,
+    stalking,
+  } = useInviteConfig();
   const [phase, setPhase] = useState<Phase>("invite");
   const [plan, setPlan] = useState<DatePlan | null>(null);
   const [escapeCount, setEscapeCount] = useState(0);
@@ -178,7 +186,7 @@ export function InvitationCard({ heartClicks = 0 }: Props) {
             <p className="debt-badge mt-4 rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3 text-center text-base font-bold text-red-700">
               🧾 Dívida atual: R$ {formatDebt(totalDebt)}
               <span className="mt-1 block text-xs font-normal text-red-500">
-                +R$ {formatDebt(inviteConfig.stalking.feePerEscape)} a cada perseguição
+                +R$ {formatDebt(stalking.feePerEscape)} a cada perseguição
               </span>
             </p>
           )}

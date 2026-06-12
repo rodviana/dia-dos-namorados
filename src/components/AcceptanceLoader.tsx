@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { inviteConfig } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 
 type Props = {
   onDone: () => void;
 };
 
 export function AcceptanceLoader({ onDone }: Props) {
-  const messages = inviteConfig.fun.loadingMessages;
+  const { fun } = useInviteConfig();
+  const messages = fun.loadingMessages;
   const [index, setIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 

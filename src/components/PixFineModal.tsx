@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { inviteConfig } from "@/config/inviteConfig";
+import type { NoFine } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 
-type Fine = (typeof inviteConfig.noFines)[number];
+type Fine = NoFine;
 
 type Props = {
   fine: Fine;
@@ -14,7 +15,7 @@ type Props = {
 
 export function PixFineModal({ fine, attempt, totalDebt, onClose }: Props) {
   const [copied, setCopied] = useState(false);
-  const { pix } = inviteConfig;
+  const { pix } = useInviteConfig();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";

@@ -1,6 +1,6 @@
 "use client";
 
-import { inviteConfig } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 
 type Props = {
   scale: number;
@@ -8,7 +8,8 @@ type Props = {
 };
 
 export function GrowingYesButton({ scale, onClick }: Props) {
-  const labels = inviteConfig.fun.yesLabels;
+  const { fun } = useInviteConfig();
+  const labels = fun.yesLabels;
   const labelIndex = Math.min(scale, labels.length - 1);
   const fontSize = Math.min(1 + scale * 0.08, 1.6);
 

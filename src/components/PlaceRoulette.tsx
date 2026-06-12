@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { inviteConfig } from "@/config/inviteConfig";
+import type { PlaceOption } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 
-type Place = (typeof inviteConfig.placeOptions)[number];
+type Place = PlaceOption;
 
 type Props = {
   onSelect: (placeId: string) => void;
@@ -11,7 +12,8 @@ type Props = {
 };
 
 export function PlaceRoulette({ onSelect, selectedPlaceId }: Props) {
-  const places = inviteConfig.placeOptions.filter((p) => !p.allowCustom);
+  const { placeOptions } = useInviteConfig();
+  const places = placeOptions.filter((p) => !p.allowCustom);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<Place | null>(null);
   const [display, setDisplay] = useState<Place | null>(null);

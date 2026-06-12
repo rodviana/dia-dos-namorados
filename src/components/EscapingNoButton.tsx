@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { inviteConfig } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 import { FloatingTaunt } from "./FloatingTaunt";
 import { PixFineModal } from "./PixFineModal";
 
@@ -61,6 +61,7 @@ export function EscapingNoButton({
   const isLooseRef = useRef(false);
   const fleeEnabledRef = useRef(false);
 
+  const inviteConfig = useInviteConfig();
   const { stalking, noFines } = inviteConfig;
 
   const [isLoose, setIsLoose] = useState(false);

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { inviteConfig, type DatePlan } from "@/config/inviteConfig";
+import type { DatePlan } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 import { Confetti } from "./Confetti";
 
 type Props = {
@@ -14,8 +15,12 @@ type Props = {
 };
 
 /** Resumo sem emojis — WhatsApp quebra icones via link wa.me */
-function buildWhatsAppSummary(plan: DatePlan, stats?: Props["stats"]) {
-  const { guestName, yourName } = inviteConfig;
+function buildWhatsAppSummary(
+  plan: DatePlan,
+  guestName: string,
+  yourName: string,
+  stats?: Props["stats"]
+) {
   const placeDisplay = plan.customPlace
     ? `${plan.placeName}: ${plan.customPlace}`
     : plan.placeName;
@@ -51,7 +56,8 @@ function buildWhatsAppUrl(phone: string, text: string) {
 }
 
 export function ConfirmationScreen({ plan, stats }: Props) {
-  const { guestName, yourName, confirmationMessage, contact } = inviteConfig;
+  const { guestName, yourName, confirmationMessage, contact } =
+    useInviteConfig();
   const [copied, setCopied] = useState(false);
   const [whatsappOpened, setWhatsappOpened] = useState(false);
 
@@ -61,8 +67,8 @@ export function ConfirmationScreen({ plan, stats }: Props) {
 
   const achievement = getAchievement(stats);
   const summary = useMemo(
-    () => buildWhatsAppSummary(plan, stats),
-    [plan, stats]
+    () => buildWhatsAppSummary(plan, guestName, yourName, stats),
+    [plan, guestName, yourName, stats]
   );
 
   const whatsappUrl = useMemo(

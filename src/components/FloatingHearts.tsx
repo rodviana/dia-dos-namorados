@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { inviteConfig } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 
 const HEARTS = Array.from({ length: 20 }, (_, i) => ({
   id: i,
@@ -20,7 +20,8 @@ export function FloatingHearts({ onHeartClick }: Props) {
   const [pop, setPop] = useState<{ id: number; msg: string; x: number; y: number } | null>(
     null
   );
-  const messages = inviteConfig.fun.heartClicks;
+  const { fun } = useInviteConfig();
+  const messages = fun.heartClicks;
 
   const handleClick = (e: React.MouseEvent, id: number) => {
     const msg = messages[Math.floor(Math.random() * messages.length)];

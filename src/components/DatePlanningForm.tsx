@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { inviteConfig, type DatePlan } from "@/config/inviteConfig";
+import type { DatePlan } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 import { PlaceRoulette } from "./PlaceRoulette";
 
 type Props = {
@@ -36,7 +37,7 @@ function formatDateLabel(isoDate: string) {
 }
 
 export function DatePlanningForm({ onConfirm }: Props) {
-  const { guestName, yourName, timePresets, placeOptions } = inviteConfig;
+  const { guestName, yourName, timePresets, placeOptions } = useInviteConfig();
   const minDate = useMemo(() => todayIso(), []);
 
   const [step, setStep] = useState(1);

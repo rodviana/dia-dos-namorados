@@ -1,4 +1,4 @@
-export const inviteConfig = {
+export const defaultInviteConfig = {
   /** Seu nome */
   yourName: "Rodrigo",
 
@@ -219,7 +219,68 @@ export const inviteConfig = {
       "Mais um ❤️ no bolso",
     ],
   },
+} as const;
+
+/** @deprecated Use defaultInviteConfig ou useInviteConfig() */
+export const inviteConfig = defaultInviteConfig;
+
+export type InviteConfig = {
+  yourName: string;
+  guestName: string;
+  title: string;
+  invitation: string;
+  confirmationMessage: string;
+  music: {
+    title: string;
+    artists: string;
+    youtubeId: string;
+  };
+  contact: {
+    whatsapp: string;
+    label: string;
+  };
+  timePresets: readonly {
+    period: string;
+    icon: string;
+    times: readonly string[];
+  }[];
+  placeOptions: readonly {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    allowCustom?: boolean;
+    customPlaceholder?: string;
+  }[];
+  pix: {
+    key: string;
+    displayKey?: string;
+    holderName: string;
+    label: string;
+  };
+  stalking: {
+    feePerEscape: number;
+    autoFineEvery: number;
+    autoFineExtra: string;
+  };
+  noFines: readonly {
+    amount: number;
+    title: string;
+    message: string;
+  }[];
+  noButtonMessages: readonly string[];
+  fun: {
+    loadingMessages: readonly string[];
+    taunts: readonly string[];
+    errorToasts: readonly string[];
+    yesLabels: readonly string[];
+    escapeHints: Record<number, string>;
+    heartClicks: readonly string[];
+  };
 };
+
+export type NoFine = InviteConfig["noFines"][number];
+export type PlaceOption = InviteConfig["placeOptions"][number];
 
 export type DatePlan = {
   dateLabel: string;

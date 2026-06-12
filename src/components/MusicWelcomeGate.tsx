@@ -1,13 +1,13 @@
 "use client";
 
-import { inviteConfig } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 
 type Props = {
   onAccept: () => void;
 };
 
 export function MusicWelcomeGate({ onAccept }: Props) {
-  const { guestName, yourName, music } = inviteConfig;
+  const { guestName, yourName, music } = useInviteConfig();
 
   return (
     <div className="music-gate fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto px-4 py-6 sm:px-6">

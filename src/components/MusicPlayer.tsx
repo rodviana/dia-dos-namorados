@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { inviteConfig } from "@/config/inviteConfig";
+import { useInviteConfig } from "@/context/InviteConfigContext";
 
 type YTPlayer = {
   playVideo: () => void;
@@ -74,7 +74,7 @@ type Props = {
 };
 
 export function MusicPlayer({ active }: Props) {
-  const { music } = inviteConfig;
+  const { music } = useInviteConfig();
   const playerRef = useRef<YTPlayer | null>(null);
   const initRef = useRef(false);
   const [expanded, setExpanded] = useState(false);
