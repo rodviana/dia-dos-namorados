@@ -7,8 +7,9 @@ import { PixFineModal } from "./PixFineModal";
 
 type Props = {
   onEscape: () => void;
-  onCaught: (totalDebt: number) => void;
-  onFunEvent?: (type: "taunt" | "caught") => void;
+  onCaught: (totalDebt: number, auto?: boolean) => void;
+  onDebtChange?: (totalDebt: number) => void;
+  onFunEvent?: (type: "taunt" | "caught" | "auto-fine") => void;
   message: string;
   escapeCount: number;
 };
@@ -31,6 +32,7 @@ function getFleeSettings(fleeIndex: number) {
 export function EscapingNoButton({
   onEscape,
   onCaught,
+  onDebtChange,
   onFunEvent,
   message,
   escapeCount,
@@ -39,11 +41,15 @@ export function EscapingNoButton({
   const mouseRef = useRef({ x: 0, y: 0 });
   const fleeingRef = useRef(false);
   const tauntCooldown = useRef(false);
+  const modalOpenRef = useRef(false);
   const caughtCountRef = useRef(0);
+  const autoFineCountRef = useRef(0);
   const totalDebtRef = useRef(0);
   const positionRef = useRef({ x: 0, y: 0 });
   const fleeCountRef = useRef(0);
   const anchorRef = useRef<{ x: number; y: number } | null>(null);
+
+  const { stalking, noFines } = inviteConfig;
 
   const [isLoose, setIsLoose] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -51,10 +57,54 @@ export function EscapingNoButton({
   const [taunt, setTaunt] = useState<{ msg: string; x: number; y: number } | null>(
     null
   );
-  const [activeFine, setActiveFine] = useState<
-    (typeof inviteConfig.noFines)[number] | null
-  >(null);
+  const [activeFine, setActiveFine] = useState<{
+    fine: (typeof noFines)[number];
+    isAuto: boolean;
+  } | null>(null);
   const [fineAttempt, setFineAttempt] = useState(0);
+
+  const syncDebt = useCallback(
+    (debt: number) => {
+      totalDebtRef.current = debt;
+      onDebtChange?.(debt);
+    },
+    [onDebtChange]
+  );
+
+  const showFineModal = useCallback(
+    (fineIndex: number, isAuto: boolean) => {
+      if (modalOpenRef.current) return;
+
+      const fine = noFines[Math.min(fineIndex, noFines.length - 1)];
+      const displayFine = isAuto
+        ? {
+            ...fine,
+            message: `${fine.message} ${stalking.autoFineExtra}`,
+            title: "Multa automática 📢",
+          }
+        : fine;
+
+      modalOpenRef.current = true;
+      totalDebtRef.current += fine.amount;
+      syncDebt(totalDebtRef.current);
+
+      if (isAuto) {
+        autoFineCountRef.current += 1;
+        setFineAttempt(autoFineCountRef.current);
+      } else {
+        caughtCountRef.current += 1;
+        setFineAttempt(caughtCountRef.current);
+      }
+
+      setIsShaking(true);
+      setActiveFine({ fine: displayFine, isAuto });
+      onCaught(totalDebtRef.current, isAuto);
+      onFunEvent?.(isAuto ? "auto-fine" : "caught");
+
+      setTimeout(() => setIsShaking(false), 500);
+    },
+    [noFines, onCaught, onFunEvent, stalking.autoFineExtra, syncDebt]
+  );
 
   const showTaunt = useCallback(
     (x: number, y: number) => {
@@ -147,41 +197,49 @@ export function EscapingNoButton({
       if (triggerEscape) {
         fleeingRef.current = true;
         fleeCountRef.current += 1;
+        const currentFlee = fleeCountRef.current;
+
+        totalDebtRef.current += stalking.feePerEscape;
+        syncDebt(totalDebtRef.current);
+
         onEscape();
         showTaunt(fromX, fromY);
+
+        if (
+          currentFlee >= stalking.autoFineEvery &&
+          currentFlee % stalking.autoFineEvery === 0
+        ) {
+          setTimeout(() => {
+            showFineModal(autoFineCountRef.current, true);
+          }, 300);
+        }
+
         setTimeout(() => {
           fleeingRef.current = false;
         }, settings.cooldown);
       }
     },
-    [isLoose, onEscape, showTaunt]
+    [
+      isLoose,
+      onEscape,
+      showFineModal,
+      showTaunt,
+      stalking.autoFineEvery,
+      stalking.feePerEscape,
+      syncDebt,
+    ]
   );
 
   const handleCaught = useCallback(() => {
-    const fineIndex = Math.min(
-      caughtCountRef.current,
-      inviteConfig.noFines.length - 1
-    );
-    const fine = inviteConfig.noFines[fineIndex];
-
-    caughtCountRef.current += 1;
-    totalDebtRef.current += fine.amount;
-
-    setIsShaking(true);
-    setFineAttempt(caughtCountRef.current);
-    setActiveFine(fine);
-    onCaught(totalDebtRef.current);
-    onFunEvent?.("caught");
-
-    setTimeout(() => setIsShaking(false), 500);
-  }, [onCaught, onFunEvent]);
+    showFineModal(caughtCountRef.current, false);
+  }, [showFineModal]);
 
   useEffect(() => {
     const trackMouse = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
 
       const wrapper = wrapperRef.current;
-      if (!wrapper || fleeingRef.current) return;
+      if (!wrapper || fleeingRef.current || modalOpenRef.current) return;
 
       const rect = wrapper.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
@@ -200,10 +258,13 @@ export function EscapingNoButton({
   }, [fleeFrom]);
 
   const handlePointerNear = () => {
-    fleeFrom(mouseRef.current.x, mouseRef.current.y);
+    if (!modalOpenRef.current) {
+      fleeFrom(mouseRef.current.x, mouseRef.current.y);
+    }
   };
 
   const closeFine = () => {
+    modalOpenRef.current = false;
     setActiveFine(null);
     fleeFrom(mouseRef.current.x, mouseRef.current.y, false);
   };
@@ -236,8 +297,10 @@ export function EscapingNoButton({
           onMouseEnter={handlePointerNear}
           onTouchStart={(e) => {
             e.preventDefault();
-            const touch = e.touches[0];
-            fleeFrom(touch.clientX, touch.clientY);
+            if (!modalOpenRef.current) {
+              const touch = e.touches[0];
+              fleeFrom(touch.clientX, touch.clientY);
+            }
           }}
           onClick={(e) => {
             e.preventDefault();
@@ -252,7 +315,7 @@ export function EscapingNoButton({
 
       {activeFine && (
         <PixFineModal
-          fine={activeFine}
+          fine={activeFine.fine}
           attempt={fineAttempt}
           totalDebt={totalDebtRef.current}
           onClose={closeFine}

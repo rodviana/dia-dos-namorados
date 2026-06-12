@@ -94,17 +94,31 @@ export function InvitationCard({ heartClicks = 0 }: Props) {
     }
   };
 
-  const handleCaught = (debt: number) => {
+  const formatDebt = (debt: number) =>
+    debt.toFixed(2).replace(".", ",");
+
+  const handleDebtChange = (debt: number) => {
+    setTotalDebt(debt);
+    if (debt > 0 && escapeCount > 0) {
+      setHint(
+        `Dívida subindo... R$ ${formatDebt(debt)} só de perseguir o Não! 💸`
+      );
+    }
+  };
+
+  const handleCaught = (debt: number, auto?: boolean) => {
     setTotalDebt(debt);
     setHint(
-      `R$ ${debt.toFixed(2).replace(".", ",")} em multas! Paga o PIX ou clica no Sim 💸`
+      auto
+        ? `Multa automática! R$ ${formatDebt(debt)} — parou de caçar o Não! 😤`
+        : `R$ ${formatDebt(debt)} em multas! Paga o PIX ou clica no Sim 💸`
     );
     showRandomToast();
     triggerShake();
   };
 
-  const handleFunEvent = (type: "taunt" | "caught") => {
-    if (type === "caught") triggerShake();
+  const handleFunEvent = (type: "taunt" | "caught" | "auto-fine") => {
+    if (type === "caught" || type === "auto-fine") triggerShake();
   };
 
   return (
@@ -149,6 +163,7 @@ export function InvitationCard({ heartClicks = 0 }: Props) {
               escapeCount={escapeCount}
               message={noMessage}
               onEscape={handleEscape}
+              onDebtChange={handleDebtChange}
               onCaught={handleCaught}
               onFunEvent={handleFunEvent}
             />
@@ -161,7 +176,10 @@ export function InvitationCard({ heartClicks = 0 }: Props) {
 
           {totalDebt > 0 && (
             <p className="debt-badge mt-4 rounded-2xl border-2 border-red-300 bg-red-50 px-4 py-3 text-center text-base font-bold text-red-700">
-              🧾 Dívida atual: R$ {totalDebt.toFixed(2).replace(".", ",")}
+              🧾 Dívida atual: R$ {formatDebt(totalDebt)}
+              <span className="mt-1 block text-xs font-normal text-red-500">
+                +R$ {formatDebt(inviteConfig.stalking.feePerEscape)} a cada perseguição
+              </span>
             </p>
           )}
         </div>

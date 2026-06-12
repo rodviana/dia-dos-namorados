@@ -10,7 +10,7 @@ export const inviteConfig = {
 
   /** Texto principal do convite */
   invitation:
-    "Gostaria muito da honra da sua companhia em um encontro. Escolha a data, o horário e o local que mais combinarem com você — prometo fazer valer a pena.",
+    "Gostaria muito da honra da sua companhia em um encontro. Escolha o local, a data e o horário que mais combinarem com você — prometo fazer valer a pena.",
 
   /** Mensagem após confirmar o plano */
   confirmationMessage:
@@ -22,17 +22,12 @@ export const inviteConfig = {
     label: "Enviar resumo no WhatsApp",
   },
 
-  /** Opções de data */
-  dateOptions: [
-    { id: "sex-13", label: "Sexta, 13 de junho" },
-    { id: "sab-14", label: "Sábado, 14 de junho" },
-    { id: "dom-15", label: "Domingo, 15 de junho" },
-    { id: "qua-18", label: "Quarta, 18 de junho" },
-    { id: "sab-21", label: "Sábado, 21 de junho" },
+  /** Atalhos de horário (opcional — o convidado pode escolher qualquer hora) */
+  timePresets: [
+    { period: "Manhã", icon: "🌅", times: ["08:00", "09:00", "10:00", "11:00"] },
+    { period: "Tarde", icon: "☀️", times: ["12:00", "14:00", "15:00", "16:00", "17:00"] },
+    { period: "Noite", icon: "🌙", times: ["18:00", "19:00", "20:00", "21:00", "22:00"] },
   ],
-
-  /** Opções de horário */
-  timeOptions: ["17:00", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30"],
 
   /** Opções de local */
   placeOptions: [
@@ -73,11 +68,20 @@ export const inviteConfig = {
       icon: "🍸",
     },
     {
+      id: "viagem",
+      name: "Viagem",
+      description: "Outra cidade, praia, serra — bora viajar juntos",
+      icon: "✈️",
+      allowCustom: true,
+      customPlaceholder: "Para onde você quer ir?",
+    },
+    {
       id: "outro",
       name: "Outro / surpresa",
       description: "Sugira um lugar — estou aberto(a) a ideias!",
       icon: "✨",
       allowCustom: true,
+      customPlaceholder: "Qual lugar você sugere?",
     },
   ],
 
@@ -87,6 +91,17 @@ export const inviteConfig = {
     displayKey: "056.922.911-18",
     holderName: "Rodrigo",
     label: "CPF",
+  },
+
+  /** Dívida por perseguir o botão Não */
+  stalking: {
+    /** Valor que sobe a cada fuga */
+    feePerEscape: 1.5,
+    /** A cada X fugas, abre multa automática */
+    autoFineEvery: 4,
+    /** Mensagem extra na multa automática */
+    autoFineExtra:
+      "Multa por insistir em perseguir o botão. Para de caçar o Não! 😤",
   },
 
   /** Multas progressivas por cada clique no "Não" */
@@ -182,9 +197,9 @@ export const inviteConfig = {
       1: "O botão 'Não' tá fugindo! Aproxima o mouse e vê no que dá 🏃",
       2: "Quase pegou... quase! O botão é esperto 😏",
       3: "Clica nos corações ♥ flutuando — easter egg!",
-      4: "Tá difícil? O botão verde ali é bem mais fácil 👉",
+      4: "A cada 4 perseguições abre multa SOZINHA. Cuidado! 📢",
       5: "Se conseguir clicar no Não... multa com PIX 😈",
-      7: "Cada clique no Não sai caro. O Sim tá gigante!",
+      7: "A dívida só sobe! Cada fuga custa caro. O Sim tá gigante!",
       10: "O Sim tá gigante. É um sinal do universo. ✨",
     },
 

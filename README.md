@@ -26,7 +26,10 @@ export const inviteConfig = {
     { id: "sab-14", label: "Sábado, 14 de junho" },
     // ...
   ],
-  timeOptions: ["18:00", "19:00", "20:00"],
+  timePresets: [
+    { period: "Manhã", icon: "🌅", times: ["09:00", "10:00"] },
+    { period: "Noite", icon: "🌙", times: ["19:00", "20:00"] },
+  ],
   placeOptions: [
     { id: "jantar", name: "Jantar", description: "...", icon: "🍽️" },
     // ...

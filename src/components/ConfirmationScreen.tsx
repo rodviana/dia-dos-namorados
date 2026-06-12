@@ -13,25 +13,41 @@ type Props = {
   };
 };
 
-function buildSummary(plan: DatePlan) {
+/** Resumo sem emojis — WhatsApp quebra icones via link wa.me */
+function buildWhatsAppSummary(plan: DatePlan, stats?: Props["stats"]) {
   const { guestName, yourName } = inviteConfig;
   const placeDisplay = plan.customPlace
     ? `${plan.placeName}: ${plan.customPlace}`
     : plan.placeName;
 
   const lines = [
-    `💌 Convite confirmado!`,
+    `*Convite confirmado!*`,
     ``,
     `${guestName} aceitou sair com ${yourName}!`,
     ``,
-    `📅 Data: ${plan.dateLabel}`,
-    `🕐 Horário: ${plan.time}`,
-    `📍 Local: ${placeDisplay}`,
+    `*Data:* ${plan.dateLabel}`,
+    `*Horário:* ${plan.time}`,
+    `*Local:* ${placeDisplay}`,
   ];
 
-  if (plan.note) lines.push(`💬 Obs: ${plan.note}`);
+  if (plan.note) lines.push(`*Obs:* ${plan.note}`);
+
+  if (stats && stats.totalDebt > 0) {
+    const debt = stats.totalDebt.toFixed(2).replace(".", ",");
+    lines.push(
+      ``,
+      `*Dívida na brincadeira do botão Não:* R$ ${debt}`,
+      `_Mas como disse sim... escapou dessa vez! Perdoado(a) por ${yourName}._`
+    );
+  }
 
   return lines.join("\n");
+}
+
+function buildWhatsAppUrl(phone: string, text: string) {
+  const number = phone.replace(/\D/g, "");
+  const encoded = encodeURIComponent(text);
+  return `https://api.whatsapp.com/send?phone=${number}&text=${encoded}`;
 }
 
 export function ConfirmationScreen({ plan, stats }: Props) {
@@ -44,10 +60,15 @@ export function ConfirmationScreen({ plan, stats }: Props) {
     : plan.placeName;
 
   const achievement = getAchievement(stats);
-  const summary = useMemo(() => buildSummary(plan), [plan]);
+  const summary = useMemo(
+    () => buildWhatsAppSummary(plan, stats),
+    [plan, stats]
+  );
 
-  const whatsappNumber = contact.whatsapp.replace(/\D/g, "");
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(summary)}`;
+  const whatsappUrl = useMemo(
+    () => buildWhatsAppUrl(contact.whatsapp, summary),
+    [contact.whatsapp, summary]
+  );
 
   useEffect(() => {
     if (!contact.whatsapp || whatsappOpened) return;
@@ -86,6 +107,19 @@ export function ConfirmationScreen({ plan, stats }: Props) {
         {whatsappOpened && (
           <p className="mb-4 rounded-xl bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
             Abrindo WhatsApp para enviar o resumo...
+          </p>
+        )}
+
+        {stats && stats.totalDebt > 0 && (
+          <p className="mb-4 rounded-2xl border-2 border-dashed border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            🧾 Dívida na brincadeira:{" "}
+            <strong>
+              R$ {stats.totalDebt.toFixed(2).replace(".", ",")}
+            </strong>
+            <br />
+            <span className="text-rose-500">
+              😏 Mas escapou dessa vez — perdoado(a)!
+            </span>
           </p>
         )}
 
