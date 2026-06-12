@@ -92,10 +92,10 @@ export function ConfirmationScreen({ plan, stats }: Props) {
   };
 
   return (
-    <div className="success-enter flex min-h-screen flex-col items-center justify-center px-4 py-12 text-center">
+    <div className="success-enter flex min-h-[100dvh] flex-col items-center justify-center px-3 py-6 pb-28 text-center sm:px-4 sm:py-12 sm:pb-12">
       <Confetti />
 
-      <div className="glass-card success-card relative z-10 w-full max-w-md p-8 sm:p-10">
+      <div className="glass-card success-card relative z-10 w-full max-w-md p-5 sm:p-8 md:p-10">
         <p className="mb-2 text-5xl">🎉</p>
         <h2 className="mb-2 font-serif text-3xl font-bold text-rose-700">
           Encontro confirmado!

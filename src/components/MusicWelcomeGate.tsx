@@ -10,15 +10,15 @@ export function MusicWelcomeGate({ onAccept }: Props) {
   const { guestName, yourName, music } = inviteConfig;
 
   return (
-    <div className="music-gate fixed inset-0 z-[200] flex items-center justify-center px-6">
-      <div className="music-gate-card relative z-10 w-full max-w-md p-8 text-center sm:p-12">
-        <p className="mb-4 text-6xl music-gate-pulse">💌</p>
+    <div className="music-gate fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto px-4 py-6 sm:px-6">
+      <div className="music-gate-card relative z-10 my-auto w-full max-w-md p-6 text-center sm:p-10 md:p-12">
+        <p className="mb-3 text-5xl music-gate-pulse sm:mb-4 sm:text-6xl">💌</p>
 
         <p className="text-xs font-bold uppercase tracking-[0.3em] text-rose-400">
           Convite especial
         </p>
 
-        <h1 className="mt-3 font-serif text-3xl font-bold text-rose-800 sm:text-4xl">
+        <h1 className="mt-2 font-serif text-2xl font-bold text-rose-800 sm:mt-3 sm:text-4xl">
           Oi, {guestName}!
         </h1>
 
@@ -39,7 +39,7 @@ export function MusicWelcomeGate({ onAccept }: Props) {
         <button
           type="button"
           onClick={onAccept}
-          className="music-gate-btn mt-10 w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 py-5 text-lg font-bold text-white shadow-xl shadow-rose-400/40 transition hover:from-rose-600 hover:via-pink-600 hover:to-rose-600"
+          className="music-gate-btn mt-8 w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 py-4 text-base font-bold text-white shadow-xl shadow-rose-400/40 transition hover:from-rose-600 hover:via-pink-600 hover:to-rose-600 sm:mt-10 sm:py-5 sm:text-lg"
         >
           Aceitar e iniciar a música 🎵
         </button>

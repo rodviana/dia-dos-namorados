@@ -109,8 +109,8 @@ export function DatePlanningForm({ onConfirm }: Props) {
   };
 
   return (
-    <div className="success-enter flex min-h-screen flex-col items-center justify-center px-4 py-12">
-      <div className="glass-card card-enter w-full max-w-xl p-6 sm:p-10">
+    <div className="success-enter flex min-h-[100dvh] flex-col items-center justify-center px-3 py-6 pb-28 sm:px-4 sm:py-12 sm:pb-12">
+      <div className="glass-card card-enter w-full max-w-xl p-4 sm:p-6 md:p-10">
         <header className="mb-8 border-b border-rose-100 pb-6 text-center">
           <p className="mb-2 text-4xl">{STEPS[step - 1].icon}</p>
           <h2 className="font-serif text-2xl font-bold text-rose-800 sm:text-3xl">

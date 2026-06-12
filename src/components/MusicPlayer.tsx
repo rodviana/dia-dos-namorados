@@ -151,7 +151,7 @@ export function MusicPlayer({ active }: Props) {
   if (!active) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-[min(100vw-2rem,340px)]">
+    <div className="fixed bottom-3 right-3 z-50 w-[min(calc(100vw-1.5rem),340px)] pb-[env(safe-area-inset-bottom)] sm:bottom-4 sm:right-4">
       {/* Container do YouTube — sempre no DOM */}
       <div
         className={`overflow-hidden transition-all duration-300 ${

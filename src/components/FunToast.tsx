@@ -14,7 +14,7 @@ export function FunToast({ message, onDismiss }: Props) {
   }, [message, onDismiss]);
 
   return (
-    <div className="fun-toast-enter fixed bottom-6 right-4 z-[90] max-w-xs sm:right-6">
+    <div className="fun-toast-enter fixed bottom-24 right-3 z-[90] max-w-[min(calc(100vw-1.5rem),280px)] sm:bottom-6 sm:right-6">
       <div className="flex items-start gap-3 rounded-xl border border-rose-200 bg-white px-4 py-3 shadow-xl shadow-rose-900/10">
         <span className="text-lg">⚠️</span>
         <div>

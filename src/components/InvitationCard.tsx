@@ -124,9 +124,9 @@ export function InvitationCard({ heartClicks = 0 }: Props) {
   return (
     <>
       <div
-        className={`flex min-h-screen flex-col items-center justify-center px-4 py-12 ${shake ? "screen-shake" : ""}`}
+        className={`flex min-h-[100dvh] flex-col items-center justify-center px-3 py-6 pb-28 sm:px-4 sm:py-12 sm:pb-12 ${shake ? "screen-shake" : ""}`}
       >
-        <div className="glass-card card-enter w-full max-w-lg p-8 sm:p-12">
+        <div className="glass-card card-enter w-full max-w-lg p-5 sm:p-8 md:p-12">
           <div className="mb-6 border-b border-rose-100 pb-6 text-center">
             <p className="mb-3 text-4xl">💌</p>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-rose-400">
